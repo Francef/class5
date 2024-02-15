@@ -14,22 +14,28 @@ public class PathFollower : MonoBehaviour
     private float totalTimeToWP;        // the total time to get from source WP to targetWP
     private float elapsedTimeToWP = 0;  // the elapsed time (sourceWP to targetWP)
     private float speed = 3.0f;         // movement speed
-    
+    Coroutine pauseAtWaypoint;
+    bool isPlatformPaused = false;
 
-     void Start()
+
+    void Start()
     {
         TargetNextWaypoint();
     }
 
     void FixedUpdate()
     {
-        MoveTowardsWaypoint();
+        if (!isPlatformPaused)
+        {
+            MoveTowardsWaypoint();
+        }
     }
 
 
     // Determine what waypoint we are going to next, and set associated variables
     private void TargetNextWaypoint()
     {
+        pauseAtWaypoint = StartCoroutine(PlatformPause());
         // reset the elapsed time
         elapsedTimeToWP = 0;
 
@@ -90,5 +96,11 @@ public class PathFollower : MonoBehaviour
         {
             other.transform.parent = null;
         }
+    }
+    IEnumerator PlatformPause()
+    {
+        isPlatformPaused = true;
+        yield return new WaitForSeconds(1);
+        isPlatformPaused = false;
     }
 }
